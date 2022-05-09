@@ -48,11 +48,11 @@ class Solution2(object):
 
         # 반으로 쪼개서 생각할 때
         # ∪ 형태의 왼쪽 부분은 오른쪽으로 이동, 오른쪽 부분은 왼쪽으로 이동시키면서
-        # 각 부분 이동 시 블록이 작아진다면 물이 고일 수 있으므로 그 때마다 all_water += 1 시켜줌
+        # 각 부분 이동 시 블록이 작아진다면 물이 고일 수 있으므로 그 때마다 고인 만큼 all_water를 더해줌 
         # 작아지지 않고 커지거나 같다면 업데이트 시켜줌
         while l < r:
             if height[l] < height[r]:
-                # 블록이 작아지면 all_water += 1
+                # 블록이 작아지면 고인 만큼 all_water를 더해줌
                 if left_max > height[l]:
                     all_water += left_max - height[l]
                 else:
