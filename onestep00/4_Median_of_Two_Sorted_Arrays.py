@@ -31,12 +31,9 @@ class Solution:
         
         # binary search
         start, end, half = 0, n, (n + m + 1) // 2
-        print(start, end, half)
         while start <= end:
             i = (start + end) // 2
             j = half - i
-            
-            print(start, end, i)
             
             # if nums1[i] is on the left side
             if i < end and nums2[j-1] > nums1[i]:
@@ -51,8 +48,8 @@ class Solution:
                 # i is 0 means that nums1 is on the right side
                 # same j
                 left_max = max(
-                    nums1[i-1] if i != 0 else 0,
-                    nums2[j-1] if j != 0 else 0
+                    nums1[i-1] if i != 0 else float("-inf"),
+                    nums2[j-1] if j != 0 else float("-inf")
                 )
                 
                 if (n + m) % 2 == 1:
