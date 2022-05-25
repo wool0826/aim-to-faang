@@ -1,82 +1,100 @@
 class Solution(object):
     def fullJustify(self, words, maxWidth):
 
-        results = []
-        all_results = []
+        all_sentences = []
+        sentences = []
+        words_width = 0
 
         # 1. 문자열 조합 나누기
-        # e.g. ['This is an', 'example of text', 'justification.']
+        # e.g. [['This', 'is', 'an'], ['example', 'of', 'text'], ['justification.']]
         for idx, word in enumerate(words):
-            results += word + " "
-            results = "".join(results)
+            sentences.append(word)
+            # 마지막 인덱스인 경우 마지막 단어를 all_results에 넣어주고 끝냄
             if idx == len(words) - 1:
-                all_results.append(results[:-1])
+                all_sentences.append(sentences)
                 break
-            if len(results) + len(words[idx+1]) > maxWidth:
-                all_results.append(results[:-1])
-                results = ""
+            words_width += len(word) + 1 # 공백 포함
+            # 현재까지 모은 sentences 길이와 다음에 모을 sentences 길이가 maxWidth를 넘지 않는지 체크,
+            # 넘는다면 적절한 조합이라고 판단하여 all_sentences 에 넣음
+            if words_width + len(words[idx+1]) > maxWidth:
+                all_sentences.append(sentences)
+                sentences = []
+                words_width = 0
 
-        # 2. 나눈 문자열 조합에서 추가해야하는 공백 수(add_empty_num)를 구하고,
-        #    공백을 추가해야하는 횟수(empty_pos_num)을 구하여
-        #    문자열을 생성
-        new_all_results = []
-        for r_idx, results in enumerate(all_results):
-            exist_empty_num = results.count(" ")
-            add_empty_num = maxWidth - len(results) + exist_empty_num
-            empty_pos = [i for i in range(len(results)) if results[i] == " "]
-            empty_pos_num = len(empty_pos)
+        # 2. 나눈 문자열 조합에서 추가해야하는 공백 수(padding_width)를 구하고,
+        #    마지막 줄은 왼쪽 정렬 처리,
+        #    마지막 줄이 아니라면 오른쪽 보다 왼쪽에 더 많은 공백 할당 처리
+        new_all_sentences = []
+        for sentences in all_sentences:
 
-            if empty_pos_num == 0:
-                per_add_num = add_empty_num
+            # 추가해야할 공백 수(padding_width) 계산
+            sentences_width = len("".join(sentences))
+            padding_width = maxWidth - sentences_width
+
+            # 공백 추가 필요한 횟수
+            padding_num = len(sentences) - 1
+
+            # 한 단어인 경우
+            if padding_num == 0:
+                per_padding = padding_width
             else:
-                if add_empty_num % empty_pos_num == 0:
-                    per_add_num = int(add_empty_num / empty_pos_num)
+                per_padding = padding_width // padding_num
+
+            # 마지막 줄 처리
+            if all_sentences.index(sentences) == len(all_sentences) - 1:
+                sentences = " ".join(sentences)
+                sentences = sentences + " " * (padding_width - padding_num)
+                new_all_sentences.append(sentences)
+            else:
+                # 마지막 줄이 아닌 경우 균등 공백 처리
+                if padding_num == 0:
+                    new_all_sentences.append(sentences[0] + " " * per_padding)
                 else:
-                    per_add_num = int(add_empty_num / empty_pos_num) + 1
+                    # 균등 공백 처리
+                    if padding_width % padding_num == 0:
+                        new_all_sentences.append((" " * (per_padding)).join(sentences))  # onestep00님 코드 참고
+                    else:
+                        # 균등 공백 처리 아닐 경우 blanks 계산하여 per_padding 처리
+                        new_sentences = []
 
-            results = results.split(" ")
-            new_results = []
-            per_add_num_check = add_empty_num
+                        remain = padding_width % padding_num
+                        blanks = [per_padding] * padding_num
 
-            # 마지막 문자열은 왼쪽 정렬
-            if r_idx == len(all_results) - 1:
-                for idx, result in enumerate(results):
-                    new_results += result
-                    new_results = "".join(new_results)
-                    if per_add_num_check == 0:
-                        break
-                    if idx == 0:
-                        new_results += " "
-                for n in range(add_empty_num - 1):
-                    new_results += " "
-                new_all_results.append(new_results)
-            else:
-                # 마지막 문자열이 아닐 때는
-                # 왼쪽의 빈 슬롯이 오른쪽의 빈 슬롯보다 더 많은 공백이 할당되게끔 함
-                # 이 부분 아직 못함
-                for idx, result in enumerate(results):
-                    new_results += result
-                    new_results = "".join(new_results)
+                        for j in range(remain):
+                            blanks[j] += 1
 
-                    if per_add_num_check == 0:
-                        break
-                    for n in range(per_add_num):
-                        new_results += " "
-                        per_add_num_check -= 1
-                new_all_results.append(new_results)
+                        for j in range(1, padding_num + 1):
+                            new_sentences.append(sentences[j-1])
+                            new_sentences.append((" " * blanks[j-1]))
+                        new_sentences.append(sentences[j])
+                        new_all_sentences.append("".join(new_sentences))
 
-        print(new_all_results)
+        print(new_all_sentences)
 
 if __name__ == "__main__":
-    words = ["This", "is", "an", "example", "of", "text", "justification."]
-    #words = ["What","must","be","acknowledgment","shall","be"]
-    maxWidth = 16
+    words1 = ["This", "is", "an", "example", "of", "text", "justification."]
+    maxWidth1 = 16
 
-    # words = ["Science", "is", "what", "we", "understand", "well", "enough", "to", "explain", "to", "a", "computer.", "Art",
-    #  "is", "everything", "else", "we", "do"]
-    # maxWidth = 20
+    words2 = ["What","must","be","acknowledgment","shall","be"]
+    maxWidth2 = 16
 
-    # words = ["The","important","thing","is","not","to","stop","questioning.","Curiosity","has","its","own","reason","for","existing."]
-    # maxWidth = 17
+    words3 = ["Science", "is", "what", "we", "understand", "well", "enough", "to", "explain", "to", "a", "computer.", "Art",
+     "is", "everything", "else", "we", "do"]
+    maxWidth3 = 20
 
-    Solution().fullJustify(words, maxWidth)
+    words4 = ["The","important","thing","is","not","to","stop","questioning.","Curiosity","has","its","own","reason","for","existing."]
+    maxWidth4 = 17
+
+    words5 = ["Here", "is", "an", "example", "of", "text", "justification."]
+    maxWidth5 = 15
+
+    words6 = ["My", "momma", "always", "said,", "\"Life", "was", "like", "a", "box", "of", "chocolates.", "You", "never", "know",
+     "what", "you're", "gonna", "get."]
+    maxWidth6 = 20
+
+    Solution().fullJustify(words1, maxWidth1)
+    Solution().fullJustify(words2, maxWidth2)
+    Solution().fullJustify(words3, maxWidth3)
+    Solution().fullJustify(words4, maxWidth4)
+    Solution().fullJustify(words5, maxWidth5)
+    Solution().fullJustify(words6, maxWidth6)
