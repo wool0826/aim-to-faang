@@ -1,22 +1,27 @@
 class Solution {
     public int firstMissingPositive(int[] nums) {
-    
+
         int min = 1;
         int max = nums.length;
-        boolean[] resultSet = new boolean[500001];
-        int result=0;
-        
+
+        int tmp;
+
+        int result;
+
         for(int i=0; i<max; i++){
-            if(nums[i] >= min && nums[i] <= max){
-                resultSet[nums[i]-1] = true;
+            while(nums[i] >= min && nums[i] <= max && nums[nums[i]-1] != nums[i]){
+                tmp = nums[nums[i]-1];
+                nums[nums[i]-1] = nums[i];
+                nums[i] = tmp;
             }
-            }
-        for(int i=0; i<=max; i++){
-            if(!resultSet[i]){
+        }
+        for(int i=0; i<max; i++){
+            if(nums[i] < min || nums[i] > max || nums[i] != i+1){
                 result = i+1;
-                break;
-                }
+                return result;
             }
+        }
+        result = max+1;
         return result;
     }
 }
