@@ -5,7 +5,7 @@ class ListNode(object):
         self.val = val
         self.next = next
 
-class Solution(object):
+class Solution1(object):
     def mergeKLists(self, lists):
 
         if not lists: return None
@@ -33,6 +33,38 @@ class Solution(object):
 
         return result.next # result가 가르키는 ListNode 리턴
 
+class Solution2(object):
+    def mergeKLists(self, lists):
+        
+        if not lists: return None
+        if len(lists) == 1: return lists[0]
+
+        # 일단 link로 연결되어 있으니,
+        # 값을 비교하면서 결과에 따라 next를 대치해주는 작업이 필요함
+        # 그 전에 반으로 쪼개서 비교할 것
+        mid = len(lists) // 2
+        left  = self.mergeKLists(lists[:mid])
+        right = self.mergeKLists(lists[mid:])
+
+        return self.merge(left, right)
+
+    def merge(self, left, right):
+
+        temp = ListNode()
+        result = temp
+
+        while left and right:
+            if left.val < right.val:
+                temp.next = left # 작은 값을 가리키게 함
+                left = left.next # 원래 left 리스트의 첫번째 값을 그 다음 값으로 대치
+            else:
+                temp.next = right
+                right = right.next
+            temp = temp.next
+
+        temp.next = left or right  # 둘 중 하나의 값만 있다면 둘 중 하나로 대입
+        return result.next
+    
 if __name__ == '__main__':
 
     lists = [[1, 4, 5], [1, 3, 4], [2, 6]]
