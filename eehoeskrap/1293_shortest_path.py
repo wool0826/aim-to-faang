@@ -48,7 +48,7 @@ class Solution(object):
                         visited.add((row, col, removes_left))
                     # 장애물일 때
                     if grid[row][col] == 1:
-                        # 처음부터 장애물은 아닐테니까 0보다 커야함
+                        # 
                         if removes_left > 0:
                             # queue에 순회하는 값 추가 단, 장애물 삭제하며 step 사이즈를 늘려줌 
                             queue.append((row, col, removes_left - 1, step + 1))
