@@ -1,0 +1,24 @@
+import math
+
+class Solution:
+    def divideString(self, s: str, k: int, fill: str) -> List[str]:
+        cnt = 0         # 카운트
+        temp = ""       # 임시 문자열
+        answer = []     # 출력할 list
+        
+        length = math.ceil(len(s)/k) * k    # 출력되는 list의 길이
+                                            # (s의 길이 / k)의 반올림 * k
+        
+        for i in range(length):
+            cnt += 1            # 카운트 증가
+            
+            if i < len(s):      # s의 길이보다 i가 작을 때, s[i]를 temp에 넣는다
+                temp += s[i]    
+            else:               # s의 길이보다 i가 클 때, fill를 temp에 넣는다
+                temp += fill
+
+            if cnt%k == 0:      # 카운트가 k의 배수일 때, answer에 temp를 추가하고 temp를 초기화한다.
+                answer.append(temp)
+                temp = ""
+                
+        return answer           #  answer를 리턴한다.
