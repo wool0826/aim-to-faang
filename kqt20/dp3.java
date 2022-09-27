@@ -48,46 +48,24 @@ class Solution {
 class Solution {
     public int lengthOfLIS(int[] nums) {
         int n = nums.length;
-        int[] dp = new int[n];
-        int[] mins = new int[n];
+        int[] dp = new int[n+1];
+        int[] a = new int[n+1];
+        String str = "asdf";
+        Integer.parseInt(str.substring())
+        a[0] = Integer.MIN_VALUE;
+        for(int i = 1; i < n+1; i++){
+            a[i] = nums[i-1];
+        }
 
-        dp[n-1] = 1;
-        mins[n-1] = nums[n-1];
-
-        for(int i = n-2; i >= 0; i--){
-            if(nums[i] < nums[i+1]){
-                if(mins[i+1] > nums[i]){
-                    dp[i] = dp[i+1] + 1;
-                    mins[i] = nums[i];
-                }
-                else{
-                    dp[i] = dp[i+1];
-                    mins[i] = mins[i+1];
-                }
-            }
-            else{
-                boolean check = false;
-                for(int j = i+1; j < n; j++){
-                    if(nums[i] < nums[j]){
-                        if(dp[i+1] <= dp[j] + 1){
-                            dp[i] = dp[j] + 1;
-                            mins[i] = nums[i];
-                        }
-                        else {
-                            dp[i] = dp[i+1];
-                            mins[i] = mins[i+1];
-                        }
-                        check = true;
-                    }
-                }
-                if(!check){
-                    dp[i] = dp[i+1];
-                    mins[i] = mins[i+1];
+        for(int i = n; i >= 0; i--){
+            dp[i] = 1;
+            for(int j = i+1; j <= n; j++){
+                if(a[j] > a[i]){
+                    dp[i] = Math.max(dp[i], 1 + dp[j]);
                 }
             }
         }
 
-        return dp[0];
-
+        return dp[0] - 1;
     }
 }
